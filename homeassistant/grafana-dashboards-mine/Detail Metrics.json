@@ -1,0 +1,816 @@
+{
+	"annotations": {
+		"list": [
+			{
+				"builtIn": 1,
+				"datasource": "-- Grafana --",
+				"enable": true,
+				"hide": true,
+				"iconColor": "rgba(0, 211, 255, 1)",
+				"name": "Annotations & Alerts",
+				"type": "dashboard"
+			}
+		]
+	},
+	"editable": true,
+	"gnetId": null,
+	"graphTooltip": 0,
+	"id": 2,
+	"iteration": 1613205915098,
+	"links": [],
+	"panels": [
+		{
+			"aliasColors": {
+				"Batt Charge Curr": "dark-blue",
+				"Batt Discharge Curr": "rgb(105, 67, 12)",
+				"Load": "rgb(100, 201, 201)",
+				"Load Curr": "dark-red",
+				"PV Batt Curr": "dark-green"
+			},
+			"bars": false,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": "-- Mixed --",
+			"decimals": 1,
+			"fieldConfig": {
+				"defaults": {
+					"custom": {}
+				},
+				"overrides": []
+			},
+			"fill": 1,
+			"fillGradient": 0,
+			"gridPos": {
+				"h": 14,
+				"w": 18,
+				"x": 0,
+				"y": 0
+			},
+			"hiddenSeries": false,
+			"id": 2,
+			"legend": {
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
+			},
+			"lines": true,
+			"linewidth": 1,
+			"nullPointMode": "null",
+			"options": {
+				"alertThreshold": true
+			},
+			"percentage": false,
+			"pluginVersion": "7.3.6",
+			"pointradius": 2,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [
+				{
+					"alias": "SSEG.mean",
+					"yaxis": 1
+				},
+				{
+					"alias": "BattVolt",
+					"yaxis": 1
+				},
+				{
+					"alias": "BattFloat",
+					"yaxis": 1
+				},
+				{
+					"alias": "BattVolt2",
+					"yaxis": 2
+				},
+				{
+					"alias": "BattBulkVolt",
+					"yaxis": 2
+				},
+				{
+					"alias": "PV Batt Curr",
+					"yaxis": 2
+				},
+				{
+					"alias": "PV Input Voltage",
+					"yaxis": 1
+				},
+				{
+					"alias": "Batt Charge Curr",
+					"yaxis": 2
+				},
+				{
+					"alias": "Load Curr",
+					"yaxis": 2
+				},
+				{
+					"alias": "Batt Discharge Curr",
+					"yaxis": 2
+				},
+				{
+					"alias": "SCC Charge On",
+					"yaxis": 2
+				},
+				{
+					"alias": "AC charge on",
+					"yaxis": 2
+				}
+			],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [
+				{
+					"alias": "Load",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"linear"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "SELECT mean(\"ac_output_power_va\") FROM \"SSEG\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)",
+					"rawQuery": false,
+					"refId": "A",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"ac_output_power_va"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							},
+							{
+								"params": [
+									" / 100"
+								],
+								"type": "math"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "BattVolt",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"linear"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "SELECT mean(\"battery_voltage\") FROM \"SSEG\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+					"rawQuery": false,
+					"refId": "D",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"battery_voltage"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "PV Batt Curr",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"linear"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "E",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"pv_input_current_for_battery"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "PV Input Voltage",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"linear"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "F",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"pv_input_voltage_1"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Batt Charge Curr",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"linear"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "G",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"battery_charging_current"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Load Curr",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"linear"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "B",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"ac_output_power_va"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							},
+							{
+								"params": [
+									" / 230"
+								],
+								"type": "math"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Batt Discharge Curr",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"linear"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "SELECT mean(\"battery_discharge_current\") FROM \"SSEG\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)",
+					"rawQuery": true,
+					"refId": "C",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"battery_discharge_current"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "AC Charge Supplement",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "SELECT (mean(\"battery_charging_current\") - mean(\"pv_input_current_for_battery\"))*(mean(\"battery_voltage\")) FROM \"SSEG\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)",
+					"rawQuery": true,
+					"refId": "H",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"battery_charging_current"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Solar charge priority",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "I",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"charger_source_priority"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "median"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "AC charge on",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "J",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"ac_charge_on"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "SCC Charge On",
+					"datasource": "InfluxDB",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "K",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"scc_charge_on"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				}
+			],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeRegions": [],
+			"timeShift": null,
+			"title": "Currents",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [
+				{
+					"decimals": null,
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": "0",
+					"show": true
+				},
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			],
+			"yaxis": {
+				"align": false,
+				"alignLevel": null
+			}
+		},
+		{
+			"aliasColors": {},
+			"bars": false,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": null,
+			"fieldConfig": {
+				"defaults": {
+					"custom": {}
+				},
+				"overrides": []
+			},
+			"fill": 1,
+			"fillGradient": 0,
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 1,
+				"y": 14
+			},
+			"hiddenSeries": false,
+			"id": 4,
+			"legend": {
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
+			},
+			"lines": true,
+			"linewidth": 1,
+			"nullPointMode": "null",
+			"options": {
+				"alertThreshold": true
+			},
+			"percentage": false,
+			"pluginVersion": "7.3.6",
+			"pointradius": 2,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [
+				{
+					"groupBy": [
+						{
+							"params": [
+								"1h"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"refId": "A",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"battery_capacity"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "count"
+							}
+						]
+					],
+					"tags": []
+				}
+			],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeRegions": [],
+			"timeShift": null,
+			"title": "Sample times",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				},
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			],
+			"yaxis": {
+				"align": false,
+				"alignLevel": null
+			}
+		}
+	],
+	"refresh": false,
+	"schemaVersion": 26,
+	"style": "dark",
+	"tags": [],
+	"templating": {
+		"list": [
+			{
+				"current": {
+					"selected": false,
+					"text": "InfluxDB",
+					"value": "InfluxDB"
+				},
+				"error": null,
+				"hide": 0,
+				"includeAll": false,
+				"label": null,
+				"multi": false,
+				"name": "test_source",
+				"options": [],
+				"query": "influxdb",
+				"refresh": 1,
+				"regex": "",
+				"skipUrlSync": false,
+				"type": "datasource"
+			},
+			{
+				"current": {
+					"selected": false,
+					"text": "\"SSEG\"",
+					"value": "\"SSEG\""
+				},
+				"error": null,
+				"hide": 2,
+				"label": null,
+				"name": "test_tablename",
+				"options": [
+					{
+						"selected": true,
+						"text": "\"SSEG\"",
+						"value": "\"SSEG\""
+					}
+				],
+				"query": "\"SSEG\"",
+				"skipUrlSync": false,
+				"type": "constant"
+			},
+			{
+				"allValue": null,
+				"current": {
+					"selected": false,
+					"text": "53",
+					"value": "53"
+				},
+				"datasource": "InfluxDB",
+				"definition": "",
+				"error": null,
+				"hide": 0,
+				"includeAll": false,
+				"label": null,
+				"multi": false,
+				"name": "test_query",
+				"options": [],
+				"query": "SELECT battery_voltage FROM $test_tablename WHERE $timeFilter",
+				"refresh": 2,
+				"regex": "",
+				"skipUrlSync": false,
+				"sort": 0,
+				"tagValuesQuery": "",
+				"tags": [],
+				"tagsQuery": "",
+				"type": "query",
+				"useTags": false
+			}
+		]
+	},
+	"time": {
+		"from": "now-6h",
+		"to": "now"
+	},
+	"timepicker": {},
+	"timezone": "",
+	"title": "Detail Metrics",
+	"uid": "ZhdX--WRk",
+	"version": 27
+}
