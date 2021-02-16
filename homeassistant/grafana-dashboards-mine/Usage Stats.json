@@ -1,0 +1,888 @@
+{
+	"annotations": {
+		"list": [
+			{
+				"builtIn": 1,
+				"datasource": "-- Grafana --",
+				"enable": true,
+				"hide": true,
+				"iconColor": "rgba(0, 211, 255, 1)",
+				"name": "Annotations & Alerts",
+				"type": "dashboard"
+			}
+		]
+	},
+	"editable": true,
+	"gnetId": null,
+	"graphTooltip": 0,
+	"id": 4,
+	"links": [],
+	"panels": [
+		{
+			"aliasColors": {
+				"Battery Load": "dark-red",
+				"Cumulate Sum - kWh": "yellow",
+				"Inverter Load": "yellow",
+				"SSEG.Batt": "dark-red",
+				"SSEG.Solar": "green",
+				"Solar Load": "green"
+			},
+			"bars": true,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": null,
+			"fieldConfig": {
+				"defaults": {
+					"custom": {
+						"align": null,
+						"filterable": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"fill": 1,
+			"fillGradient": 0,
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 0
+			},
+			"hiddenSeries": false,
+			"id": 6,
+			"legend": {
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
+			},
+			"lines": false,
+			"linewidth": 1,
+			"nullPointMode": "null",
+			"options": {
+				"alertThreshold": true
+			},
+			"percentage": false,
+			"pluginVersion": "7.3.6",
+			"pointradius": 2,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [
+				{
+					"alias": "Inverter Load",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"hide": false,
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "SELECT\n    cumulative_sum(mean(\"ac_output_power_va\"))/6/1000 as AC\nFROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "B",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"ac_output_power_va"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							},
+							{
+								"params": [],
+								"type": "cumulative_sum"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Solar Load",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select cumulative_sum(mean(\"Solar_Int\")) /6/1000 as Solar from\n            (select\n                (1 - mean(\"ac_charge_on\")) * (\n                mean(\"output_load_watt\") -\n                mean(\"battery_discharge_current\") * mean(\"battery_voltage\") -\n                mean(\"battery_voltage\") * (\n                mean(\"battery_charging_current\") - mean(\"pv_input_current_for_battery\")))\n                as Solar_Int FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)\n            ) \nWHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "D",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Battery Load",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select cumulative_sum(mean(\"Batt_Units\")) /6/1000 as Batt from\n            (select\n                mean(\"battery_voltage\") * mean(\"battery_discharge_current\")\n                as Batt_Units FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)\n            ) \nWHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "A",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Solar Charge Units",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select cumulative_sum(mean(\"Sol_Charge_Units\")) /6/1000 as Batt from\n            (select\n                mean(\"battery_voltage\") * mean(\"pv_input_current_for_battery\")\n                as Sol_Charge_Units FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)\n            ) \nWHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "C",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				}
+			],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeRegions": [],
+			"timeShift": null,
+			"title": "Inverter Load Units",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [
+				{
+					"format": "kwatth",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				},
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			],
+			"yaxis": {
+				"align": false,
+				"alignLevel": null
+			}
+		},
+		{
+			"alert": {
+				"alertRuleTags": {},
+				"conditions": [
+					{
+						"evaluator": {
+							"params": [
+								81
+							],
+							"type": "lt"
+						},
+						"operator": {
+							"type": "and"
+						},
+						"query": {
+							"params": [
+								"G",
+								"5m",
+								"now"
+							]
+						},
+						"reducer": {
+							"params": [],
+							"type": "last"
+						},
+						"type": "query"
+					}
+				],
+				"executionErrorState": "alerting",
+				"for": "0s",
+				"frequency": "10s",
+				"handler": 1,
+				"name": "Battery Capacity alert",
+				"noDataState": "no_data",
+				"notifications": []
+			},
+			"aliasColors": {
+				"Battery Charge Units": "light-green",
+				"Battery Load Units": "light-red",
+				"Battery Units": "dark-red",
+				"Capacity Deficit": "dark-orange",
+				"Cumulative": "rgb(186, 186, 186)",
+				"Cumulative Charge": "super-light-green",
+				"Cumulative Discharge": "super-light-red",
+				"SSEG.Batt_Load": "dark-red",
+				"SSEG.BatteryLoad": "rgba(115, 115, 115, 0.3)",
+				"SSEG.CumulativeCharge": "super-light-green",
+				"SSEG.CumulativeDischarge": "super-light-red",
+				"Test2": "dark-orange"
+			},
+			"bars": true,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": null,
+			"decimals": 1,
+			"description": "",
+			"fieldConfig": {
+				"defaults": {
+					"custom": {}
+				},
+				"overrides": []
+			},
+			"fill": 1,
+			"fillGradient": 0,
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 8
+			},
+			"hiddenSeries": false,
+			"id": 5,
+			"legend": {
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
+			},
+			"lines": false,
+			"linewidth": 1,
+			"nullPointMode": "null",
+			"options": {
+				"alertThreshold": true
+			},
+			"percentage": false,
+			"pluginVersion": "7.3.6",
+			"pointradius": 2,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [
+				{
+					"alias": "SSEG.BatteryLoad",
+					"stack": "A",
+					"yaxis": 1
+				},
+				{
+					"alias": "SSEG.Batt_Load",
+					"stack": "A",
+					"yaxis": 1
+				},
+				{
+					"alias": "Cumulative Discharge",
+					"bars": false,
+					"lines": true,
+					"stack": "B",
+					"yaxis": 2
+				},
+				{
+					"alias": "Cumulative Charge",
+					"bars": false,
+					"lines": true,
+					"stack": true,
+					"yaxis": 2
+				},
+				{
+					"alias": "SSEG.CumulativeCharge",
+					"bars": false,
+					"lines": true,
+					"stack": false,
+					"yaxis": 2
+				},
+				{
+					"alias": "SSEG.CumulativeDischarge",
+					"bars": false,
+					"lines": true,
+					"stack": false,
+					"yaxis": 2
+				},
+				{
+					"alias": "Capacity Deficit",
+					"bars": false,
+					"lines": true,
+					"stack": false,
+					"yaxis": 2
+				},
+				{
+					"alias": "Capacity",
+					"bars": false,
+					"lines": true,
+					"stack": false,
+					"yaxis": 2
+				},
+				{},
+				{
+					"alias": "CapacityTest",
+					"bars": false,
+					"lines": true,
+					"stack": false,
+					"yaxis": 2
+				}
+			],
+			"spaceLength": 10,
+			"stack": true,
+			"steppedLine": false,
+			"targets": [
+				{
+					"alias": "Cumulative Discharge",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"hide": true,
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select cumulative_sum(mean(\"Batt_Load\")) /6/1000 as BatteryLoad from\n            (select\n                mean(\"battery_discharge_current\") * mean(\"battery_voltage\") \n                as Batt_Load FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)\n            ) \nWHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "A",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"battery_discharge_current"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Battery Charge Units",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select\n\tmean(\"battery_charging_current\") * mean(\"battery_voltage\") * 10 * 60 / 3600 / 1000\n\tas Batt_Charge FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "C",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Battery Load Units",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select\n\tmean(\"battery_discharge_current\") * mean(\"battery_voltage\") * 10 * 60 / 3600 /1000\n\tas Batt_Load FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "B",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Cumulative Charge",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"hide": true,
+					"measurement": "SSEG",
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select cumulative_sum(mean(\"Batt_Charge\")) /6/1000 as CumulativeCharge from\n            (select\n                mean(\"battery_charging_current\") * mean(\"battery_voltage\") \n                as Batt_Charge FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)\n            ) \nWHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "D",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"battery_capacity"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"hide": true,
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select cumulative_sum(mean(\"Batt_Charge\")) /6/1000 as CumulativeCharge, cumulative_sum(mean(\"Batt_Load\")) /6/1000 as CumulativeDischarge from\n            (select\n                mean(\"battery_charging_current\") * mean(\"battery_voltage\") as Batt_Charge,\n                mean(\"battery_discharge_current\") * mean(\"battery_voltage\")  as Batt_Load\n                FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)\n            )\nWHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "E",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "Capacity",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select (200 * 48 / 1000 - cumulative_sum(mean(\"BattDefecit\")) /6/1000) / ((200 * 48) / 1000 ) * 100 as CumulativeDefecity from\n            (select\n                mean(\"battery_discharge_current\") * mean(\"battery_voltage\") -\n                mean(\"battery_charging_current\") * mean(\"battery_voltage\") as BattDefecit\n                FROM \"SSEG\" WHERE $timeFilter GROUP BY time(10m) fill(linear)\n            )\nWHERE $timeFilter GROUP BY time(10m) fill(linear)",
+					"rawQuery": true,
+					"refId": "F",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				},
+				{
+					"alias": "CapacityTest",
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select (200 * 48 / 1000 - cumulative_sum(mean(\"BattDefecit\")) /6/1000) / ((200 * 48) / 1000 ) * 100 as CumulativeDefecity from\n            (select\n                mean(\"battery_discharge_current\") * mean(\"battery_voltage\") -\n                mean(\"battery_charging_current\") * mean(\"battery_voltage\") as BattDefecit\n                FROM \"SSEG\" WHERE $timeFilter GROUP BY time(1m) fill(null)\n            )\nWHERE $timeFilter GROUP BY time(10m) fill(null)",
+					"rawQuery": true,
+					"refId": "G",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				}
+			],
+			"thresholds": [
+				{
+					"colorMode": "critical",
+					"fill": true,
+					"line": true,
+					"op": "lt",
+					"value": 81
+				}
+			],
+			"timeFrom": null,
+			"timeRegions": [],
+			"timeShift": null,
+			"title": "Battery Capacity",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [
+				{
+					"decimals": null,
+					"format": "kwatth",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				},
+				{
+					"format": "percent",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			],
+			"yaxis": {
+				"align": false,
+				"alignLevel": null
+			}
+		},
+		{
+			"datasource": null,
+			"fieldConfig": {
+				"defaults": {
+					"custom": {},
+					"mappings": [],
+					"max": 100,
+					"min": 0,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "rgb(153, 0, 17)",
+								"value": null
+							},
+							{
+								"color": "rgb(224, 0, 22)",
+								"value": 50
+							},
+							{
+								"color": "dark-orange",
+								"value": 80
+							},
+							{
+								"color": "#EAB839",
+								"value": 90
+							},
+							{
+								"color": "dark-green",
+								"value": 95
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 16
+			},
+			"id": 8,
+			"options": {
+				"reduceOptions": {
+					"calcs": [
+						"last"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showThresholdLabels": false,
+				"showThresholdMarkers": true
+			},
+			"pluginVersion": "7.3.6",
+			"targets": [
+				{
+					"groupBy": [
+						{
+							"params": [
+								"$__interval"
+							],
+							"type": "time"
+						},
+						{
+							"params": [
+								"null"
+							],
+							"type": "fill"
+						}
+					],
+					"orderByTime": "ASC",
+					"policy": "default",
+					"query": "select (200 * 48 / 1000 - cumulative_sum(mean(\"BattDefecit\")) /6/1000) / ((200 * 48) / 1000 ) * 100 as CumulativeDefecity from\n            (select\n                mean(\"battery_discharge_current\") * mean(\"battery_voltage\") -\n                mean(\"battery_charging_current\") * mean(\"battery_voltage\") as BattDefecit\n                FROM \"SSEG\" WHERE $timeFilter GROUP BY time(1m) fill(null)\n            )\nWHERE $timeFilter GROUP BY time(10m) fill(null)",
+					"rawQuery": true,
+					"refId": "A",
+					"resultFormat": "time_series",
+					"select": [
+						[
+							{
+								"params": [
+									"value"
+								],
+								"type": "field"
+							},
+							{
+								"params": [],
+								"type": "mean"
+							}
+						]
+					],
+					"tags": []
+				}
+			],
+			"timeFrom": null,
+			"timeShift": null,
+			"title": "Battery Capacity",
+			"type": "gauge"
+		}
+	],
+	"refresh": false,
+	"schemaVersion": 26,
+	"style": "dark",
+	"tags": [],
+	"templating": {
+		"list": []
+	},
+	"time": {
+		"from": "now/d",
+		"to": "now"
+	},
+	"timepicker": {},
+	"timezone": "",
+	"title": "Usage stats",
+	"uid": "C6LeTkkRz",
+	"version": 57
+}
