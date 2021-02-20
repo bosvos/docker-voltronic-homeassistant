@@ -1,0 +1,8 @@
+[Unit]
+Description=System Stats Monitor
+
+[Service]
+ExecStart= /home/pi/docker-votronic-homeassistant-bosvos/sources/inverter-mqtt/cpu_measurements.sh
+
+[Install]
+WantedBy=multi-user.target
