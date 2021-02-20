@@ -1,0 +1,1 @@
+curl http://ip4only.me/api/
