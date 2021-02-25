@@ -1,0 +1,8 @@
+[Unit]
+Description=Reverse lookup Publish IP
+
+[Service]
+ExecStart= /home/pi/docker-voltronic-homeassistant-bosvos/sources/services/publicip.sh
+
+[Install]
+WantedBy=multi-user.target

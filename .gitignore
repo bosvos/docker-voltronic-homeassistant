@@ -6,3 +6,8 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 .DS_Store
+/.idea/docker-voltronic-homeassistant-bosvos.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
