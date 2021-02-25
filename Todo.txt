@@ -1,0 +1,6 @@
+Add totals bar graph for consumption
+Improve reading speed from inverter (investigated
+Align data from inverter to influx : 1 timestamp to be shared
+
+Fix Gauges for consumption to start of day - not feasible (no start of day parameter in influx)
+Auto update dns ip value - DONE
